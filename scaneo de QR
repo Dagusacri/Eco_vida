@@ -1,54 +1,54 @@
-/proyecto
-├── index.html
-├── script.js
-└── /assets
-    └── quagga.min.js
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escáner QR</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escanear QR</title>
+  <style>
+    /* Estilos para el contenedor del QR y para la cámara */
+    #qr-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    #qr-scanner {
+      width: 100%;
+      height: auto;
+      border: 2px solid #ffffff;
+      background-color: #ffffff;
+    }
+  </style>
 </head>
 <body>
-    <!-- Incluir QuaggaJS desde un archivo local -->
-    <script src="assets/quagga.min.js"></script>
+  <h1>Escanea un QR</h1>
+  
+  <!-- Contenedor para el QR -->
+  <div id="qr-container">
+    <video id="qr-scanner"></video>
+  </div>
+  
+  <!-- Script para manejar el acceso a la cámara -->
+  <script>
+    async function initializeCamera() {
+      try {
+        const constraints = {
+          video: true // Acceder a la cámara de video
+        };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const video = document.getElementById('qr-scanner');
+        video.srcObject = stream;
+        video.setAttribute('playsinline', true); // Para iOS
+        video.play();
+      } catch (error) {
+        console.error('Error al acceder a la cámara:', error);
+      }
+    }
     
-    <!-- Botón para escanear QR -->
-    <button onclick="startCamera()">Escanear QR</button>
-    
-    <!-- Div para mostrar la cámara -->
-    <div id="camera"></div>
-    
-    <!-- Incluir tu script personalizado -->
-    <script src="script.js"></script>
+    // Inicializar la cámara al cargar la página
+    initializeCamera();
+  </script>
 </body>
 </html>
-function startCamera() {
-    const camera = document.getElementById('camera');
 
-    Quagga.init({
-        inputStream: {
-            name: 'Live',
-            type: 'LiveStream',
-            target: camera
-        },
-        decoder: {
-            readers: ['qrcode']
-        }
-    }, function(err) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        console.log('QuaggaJS iniciado correctamente.');
-
-        Quagga.start();
-    });
-
-    Quagga.onDetected(function(result) {
-        console.log('Resultado del escaneo:', result);
-        Quagga.stop();
-        alert('Código QR escaneado: ' + result.codeResult.code);
-    });
-}
