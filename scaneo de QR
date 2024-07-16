@@ -1,0 +1,54 @@
+/proyecto
+├── index.html
+├── script.js
+└── /assets
+    └── quagga.min.js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escáner QR</title>
+</head>
+<body>
+    <!-- Incluir QuaggaJS desde un archivo local -->
+    <script src="assets/quagga.min.js"></script>
+    
+    <!-- Botón para escanear QR -->
+    <button onclick="startCamera()">Escanear QR</button>
+    
+    <!-- Div para mostrar la cámara -->
+    <div id="camera"></div>
+    
+    <!-- Incluir tu script personalizado -->
+    <script src="script.js"></script>
+</body>
+</html>
+function startCamera() {
+    const camera = document.getElementById('camera');
+
+    Quagga.init({
+        inputStream: {
+            name: 'Live',
+            type: 'LiveStream',
+            target: camera
+        },
+        decoder: {
+            readers: ['qrcode']
+        }
+    }, function(err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('QuaggaJS iniciado correctamente.');
+
+        Quagga.start();
+    });
+
+    Quagga.onDetected(function(result) {
+        console.log('Resultado del escaneo:', result);
+        Quagga.stop();
+        alert('Código QR escaneado: ' + result.codeResult.code);
+    });
+}
